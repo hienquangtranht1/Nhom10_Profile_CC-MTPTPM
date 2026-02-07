@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Tasks - Nâng cao</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <!-- Header Section: Title & Date Centered -->
+        <div class="text-center mb-4">
+            <h2 class="mb-1"><i class="fas fa-check-double me-2"></i>My Tasks</h2>
+            <div class="text-secondary small">
+                <i class="far fa-calendar-alt me-1"></i>
+                <%= new Date().toLocaleDateString('vi-VN', { weekday: 'long' , year: 'numeric' , month: 'long' ,
+                    day: 'numeric' }) %>
+            </div>
+        </div>
+
+        <!-- Add Task Form: Compact & Centered -->
+        <div class="card border-0 shadow-sm p-3 mb-4 mx-auto"
+            style="border-radius: 15px; background: #fff; max-width: 700px;">
+            <form action="/add" method="POST">
+                <div class="row g-2 align-items-center justify-content-center">
+                    <div class="col-md-5">
+                        <input type="text" name="title" placeholder="Tên công việc..."
+                            class="form-control form-control-sm border-0 bg-light" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="description" placeholder="Mô tả..."
+                            class="form-control form-control-sm border-0 bg-light">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="datetime-local" name="due_date"
+                            class="form-control form-control-sm border-0 bg-light">
+                    </div>
+                    <div class="col-md-1">
+                        <button
+                            class="btn btn-primary btn-sm w-100 rounded-circle p-0 d-flex align-items-center justify-content-center"
+                            style="width: 32px; height: 32px;"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Search & Filter: Centered -->
+        <div class="d-flex justify-content-center mb-4">
+            <form action="/" method="GET" class="d-flex gap-2 align-items-center bg-white p-2 rounded-pill shadow-sm"
+                style="border: 1px solid #eee;">
+                <div class="input-group input-group-sm border-0">
+                    <span class="input-group-text bg-transparent border-0 ps-3"><i
+                            class="fas fa-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-0 shadow-none"
+                        placeholder="Tìm kiếm công việc...">
+                </div>
+                <div style="border-left: 1px solid #ddd; height: 20px; margin: 0 5px;"></div>
+                <input type="date" name="date" class="form-control form-control-sm border-0 shadow-none"
+                    style="width: 130px;">
+                <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 m-1">Lọc</button>
+                <a href="/" class="btn btn-light btn-sm rounded-circle m-1"
+                    style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;"><i
+                        class="fas fa-sync-alt text-muted"></i></a>
+            </form>
+        </div>
+
+        <!-- Task List: Centered & Beautiful -->
+        <div class="d-flex justify-content-center">
+            <div style="width: 100%; max-width: 750px;">
+                <% if(tasks.length===0) { %>
+                    <div class="text-center py-5">
+                        <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-state-2130362-1800926.png"
+                            alt="Empty" style="height: 120px; opacity: 0.6;">
+                        <p class="text-muted mt-2 small">Danh sách trống, hãy thêm việc mới!</p>
+                    </div>
+                    <% } else { %>
+                        <div class="list-group list-group-flush gap-2">
+                            <% tasks.forEach(task=> { %>
+                                <div class="list-group-item border-0 p-3 shadow-sm d-flex align-items-center justify-content-between rounded-3 mb-2 <%= task.status === 'completed' ? 'bg-light opacity-75' : 'bg-white' %>"
+                                    style="transition: transform 0.2s;">
+                                    <div class="d-flex align-items-center gap-3" style="flex: 1; min-width: 0;">
+                                        <!-- Checkbox Custom -->
+                                        <div class="form-check">
+                                            <input class="form-check-input subheading" type="checkbox"
+                                                style="width: 1.2em; height: 1.2em; cursor: pointer; border-color: #6c5ce7;"
+                                                <%=task.status==='completed' ? 'checked' : '' %>
+                                            onchange="window.location.href='/update-status/<%= task.id %>/<%=
+                                                    task.status %>'">
+                                        </div>
+
+                                        <!-- Content -->
+                                        <div class="d-flex flex-column" style="min-width: 0;">
+                                            <span
+                                                class="fw-bold text-truncate <%= task.status === 'completed' ? 'text-decoration-line-through text-muted' : 'text-dark' %>"
+                                                style="font-size: 1rem;">
+                                                <%= task.title %>
+                                            </span>
+                                            <% if (task.description) { %>
+                                                <span class="text-muted small text-truncate">
+                                                    <%= task.description %>
+                                                </span>
+                                                <% } %>
+
+                                                    <% if(task.due_date) { %>
+                                                        <% const d=new Date(task.due_date); const now=new Date(); const
+                                                            isOverdue=d < now && task.status !=='completed' ; %>
+                                                            <small
+                                                                class="<%= isOverdue ? 'text-danger fw-bold' : 'text-secondary' %> mt-1"
+                                                                style="font-size: 0.75rem;">
+                                                                <i class="far fa-clock me-1"></i>
+                                                                <%= d.toLocaleString('vi-VN', { hour: '2-digit' ,
+                                                                    minute:'2-digit', day:'2-digit', month:'2-digit' })
+                                                                    %>
+                                                            </small>
+                                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                    <!-- Actions -->
+                                    <div class="d-flex ms-3 gap-1">
+                                        <a href="/edit/<%= task.id %>"
+                                            class="btn btn-outline-primary btn-sm border-0 rounded-circle"
+                                            style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"><i
+                                                class="fas fa-pen small"></i></a>
+                                        <a href="/delete/<%= task.id %>"
+                                            class="btn btn-outline-danger btn-sm border-0 rounded-circle"
+                                            style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
+                                            onclick="return confirm('Bạn có chắc muốn xóa không?')"><i
+                                                class="fas fa-trash small"></i></a>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
