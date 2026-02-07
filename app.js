@@ -1,3 +1,29 @@
+ feature/HuynhThanhPhuc-2280602431/search
+
+// 1. READ (Lấy danh sách, bao gồm Search và Filter)
+app.get('/', (req, res) => {
+    const { search, date } = req.query;
+    let sql = "SELECT * FROM tasks WHERE 1=1";
+    let params = [];
+
+    if (search) {
+        sql += " AND title LIKE ?";
+        params.push(`%${search}%`);
+    }
+
+    if (date) {
+        // Vì due_date là DATETIME (có cả giờ phút), nên ta dùng hàm DATE() để chỉ so sánh phần ngày
+        sql += " AND DATE(due_date) = ?";
+        params.push(date);
+    }
+
+    sql += " ORDER BY created_at DESC";
+
+    db.query(sql, params, (err, results) => {
+        if (err) throw err;
+        res.render('index', { tasks: results });
+    });
+});
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
@@ -7,7 +33,6 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Kết nối MySQL
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // Thay bằng user của bạn
@@ -20,9 +45,7 @@ db.connect((err) => {
     console.log('Đã kết nối MySQL!');
 });
 
-// --- ROUTES ---
 
-// 4. DELETE
 app.get('/delete/:id', (req, res) => {
     const sql = "DELETE FROM tasks WHERE id = ?";
     db.query(sql, [req.params.id], (err) => {
@@ -32,3 +55,4 @@ app.get('/delete/:id', (req, res) => {
 });
 
 app.listen(3000, () => console.log('Server chạy tại http://localhost:3000'));
+ develop
