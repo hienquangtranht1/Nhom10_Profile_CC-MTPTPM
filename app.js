@@ -1,3 +1,32 @@
+ feature/HaLeQuocViet-2280603661/status
+
+ feature/HuynhThanhPhuc-2280602431/search
+
+// 1. READ (Lấy danh sách, bao gồm Search và Filter)
+app.get('/', (req, res) => {
+    const { search, date } = req.query;
+    let sql = "SELECT * FROM tasks WHERE 1=1";
+    let params = [];
+
+    if (search) {
+        sql += " AND title LIKE ?";
+        params.push(`%${search}%`);
+    }
+
+    if (date) {
+        // Vì due_date là DATETIME (có cả giờ phút), nên ta dùng hàm DATE() để chỉ so sánh phần ngày
+        sql += " AND DATE(due_date) = ?";
+        params.push(date);
+    }
+
+    sql += " ORDER BY created_at DESC";
+
+    db.query(sql, params, (err, results) => {
+        if (err) throw err;
+        res.render('index', { tasks: results });
+    });
+});
+ develop
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
@@ -7,7 +36,10 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
+ feature/HaLeQuocViet-2280603661/status
 // Kết nối MySQL
+
+ develop
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // Thay bằng user của bạn
@@ -20,6 +52,7 @@ db.connect((err) => {
     console.log('Đã kết nối MySQL!');
 });
 
+ feature/HaLeQuocViet-2280603661/status
 // --- ROUTES ---
 
 // 3. UPDATE Status (Toggle)
@@ -63,8 +96,18 @@ app.post('/edit/:id', (req, res) => {
     const { title, description, due_date } = req.body;
     const sql = "UPDATE tasks SET title = ?, description = ?, due_date = ? WHERE id = ?";
     db.query(sql, [title, description, due_date, req.params.id], (err) => {
+
+app.get('/delete/:id', (req, res) => {
+    const sql = "DELETE FROM tasks WHERE id = ?";
+    db.query(sql, [req.params.id], (err) => {
+ develop
         if (err) throw err;
         res.redirect('/');
     });
 });
 
+ feature/HaLeQuocViet-2280603661/status
+
+app.listen(3000, () => console.log('Server chạy tại http://localhost:3000'));
+ develop
+ develop
