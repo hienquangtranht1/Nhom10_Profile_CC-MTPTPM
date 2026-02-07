@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chỉnh sửa - ToDo App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="main-container">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <h2 class="mb-1"><i class="fas fa-edit me-2"></i>Chỉnh sửa công việc</h2>
+            <div class="text-secondary small">
+                Cập nhật thông tin chi tiết
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <div class="card border-0 shadow-sm p-4 w-100"
+                style="border-radius: 15px; background: #fff; max-width: 600px;">
+                <form action="/edit/<%= task.id %>" method="POST">
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-bold">Tên công việc</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0 bg-light rounded-start ps-3"><i
+                                    class="fas fa-heading text-muted"></i></span>
+                            <input type="text" name="title" class="form-control border-0 bg-light"
+                                value="<%= task.title %>" required style="height: 45px;">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-bold">Mô tả</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0 bg-light rounded-start ps-3"><i
+                                    class="fas fa-align-left text-muted"></i></span>
+                            <textarea name="description" class="form-control border-0 bg-light" rows="4"
+                                style="resize: none;"><%= task.description %></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small fw-bold">Hạn chót</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0 bg-light rounded-start ps-3"><i
+                                    class="far fa-calendar-alt text-muted"></i></span>
+                            <input type="datetime-local" name="due_date" class="form-control border-0 bg-light"
+                                value="<%= formattedDate %>" style="height: 45px;">
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 pt-2">
+                        <a href="/" class="btn btn-light w-100 rounded-pill py-2">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2"><i
+                                class="fas fa-save me-2"></i>Lưu thay đổi</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
