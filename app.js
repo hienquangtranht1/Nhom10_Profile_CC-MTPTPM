@@ -22,42 +22,6 @@ db.connect((err) => {
 
 // --- ROUTES ---
 
-// 1. READ (Lấy danh sách, bao gồm Search và Filter)
-app.get('/', (req, res) => {
-    const { search, date } = req.query;
-    let sql = "SELECT * FROM tasks WHERE 1=1";
-    let params = [];
-
-    if (search) {
-        sql += " AND title LIKE ?";
-        params.push(`%${search}%`);
-    }
-
-    if (date) {
-        // Vì due_date là DATETIME (có cả giờ phút), nên ta dùng hàm DATE() để chỉ so sánh phần ngày
-        sql += " AND DATE(due_date) = ?";
-        params.push(date);
-    }
-
-    sql += " ORDER BY created_at DESC";
-
-    db.query(sql, params, (err, results) => {
-        if (err) throw err;
-        res.render('index', { tasks: results });
-    });
-});
-
-// 2. CREATE
-app.post('/add', (req, res) => {
-    const { title, due_date } = req.body;
-    const description = req.body.description || '';
-    const sql = "INSERT INTO tasks (title, description, due_date) VALUES (?, ?, ?)";
-    db.query(sql, [title, description, due_date], (err) => {
-        if (err) throw err;
-        res.redirect('/');
-    });
-});
-
 // 3. UPDATE Status (Toggle)
 app.get('/update-status/:id/:status', (req, res) => {
     const { id, status } = req.params;
@@ -104,13 +68,3 @@ app.post('/edit/:id', (req, res) => {
     });
 });
 
-// 4. DELETE
-app.get('/delete/:id', (req, res) => {
-    const sql = "DELETE FROM tasks WHERE id = ?";
-    db.query(sql, [req.params.id], (err) => {
-        if (err) throw err;
-        res.redirect('/');
-    });
-});
-
-app.listen(3000, () => console.log('Server chạy tại http://localhost:3000'));
