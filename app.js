@@ -1,3 +1,5 @@
+ feature/BuiThanhAnhVu-2280603718/create
+
  feature/HaLeQuocViet-2280603661/status
 
  feature/HuynhThanhPhuc-2280602431/search
@@ -27,6 +29,7 @@ app.get('/', (req, res) => {
     });
 });
  develop
+ develop
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
@@ -36,9 +39,13 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
+ feature/BuiThanhAnhVu-2280603718/create
+// Kết nối MySQL
+
  feature/HaLeQuocViet-2280603661/status
 // Kết nối MySQL
 
+ develop
  develop
 const db = mysql.createConnection({
     host: 'localhost',
@@ -52,6 +59,16 @@ db.connect((err) => {
     console.log('Đã kết nối MySQL!');
 });
 
+ feature/BuiThanhAnhVu-2280603718/create
+// --- ROUTES ---
+
+// 2. CREATE
+app.post('/add', (req, res) => {
+    const { title, due_date } = req.body;
+    const description = req.body.description || '';
+    const sql = "INSERT INTO tasks (title, description, due_date) VALUES (?, ?, ?)";
+    db.query(sql, [title, description, due_date], (err) => {
+
  feature/HaLeQuocViet-2280603661/status
 // --- ROUTES ---
 
@@ -61,10 +78,13 @@ app.get('/update-status/:id/:status', (req, res) => {
     const newStatus = status === 'pending' ? 'completed' : 'pending';
     const sql = "UPDATE tasks SET status = ? WHERE id = ?";
     db.query(sql, [newStatus, id], (err) => {
+ develop
         if (err) throw err;
         res.redirect('/');
     });
 });
+ feature/BuiThanhAnhVu-2280603718/create
+
 
 // 3.1 UPDATE Content (Show Form)
 app.get('/edit/:id', (req, res) => {
@@ -109,5 +129,6 @@ app.get('/delete/:id', (req, res) => {
  feature/HaLeQuocViet-2280603661/status
 
 app.listen(3000, () => console.log('Server chạy tại http://localhost:3000'));
+ develop
  develop
  develop
